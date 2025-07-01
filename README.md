@@ -7,7 +7,7 @@ It is recommended to use Snakemake's poetry plugin to set up this skeleton (and 
 
 In any case, a plugin implementing this interface
 
-* has to be named snakemake-scheduler-plugin-<name>,
+* has to be named `snakemake-scheduler-plugin-<name>`,
 * has to be published on pypi.io, and
 * has to offer the following code implemented in its main module
 
