@@ -1,4 +1,4 @@
-# Snakemake Logger Plugin Interface
+# Snakemake Scheduler Plugin Interface
 
 This package provides a stable interface for interactions between Snakemake and its scheduler plugins.
 
