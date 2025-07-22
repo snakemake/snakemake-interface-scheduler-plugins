@@ -1,31 +1,56 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Iterable, Union
+from typing import Mapping, Iterable, Union
 
 from snakemake_interface_common.io import AnnotatedStringInterface
 
 
-class SchedulerJobInterface(ABC):
+class JobSchedulerInterface(ABC):
+    @property
     @abstractmethod
     def input(self) -> Iterable[AnnotatedStringInterface]:
         """Return an iterable of input files for the job."""
         ...
 
+    @property
     @abstractmethod
     def output(self) -> Iterable[AnnotatedStringInterface]:
         """Return an iterable of output files for the job."""
         ...
 
+    @property
     @abstractmethod
     def log(self) -> Iterable[AnnotatedStringInterface]:
         """Return an iterable of log files for the job."""
         ...
 
+    @property
     @abstractmethod
     def benchmark(self) -> Iterable[AnnotatedStringInterface]:
         """Return an iterable of benchmark files for the job."""
         ...
 
+    @property
     @abstractmethod
-    def resources(self) -> Dict[str, Union[str, int, float]]:
+    def priority(self) -> int:
+        """Return the priority of the job."""
+        ...
+
+    @property
+    @abstractmethod
+    def scheduler_resources(self) -> Mapping[str, Union[str, int]]:
         """Return a dictionary of resources used by the job."""
+        ...
+
+
+class SingleJobSchedulerInterface(JobSchedulerInterface, ABC):
+    @abstractmethod
+    def add_aux_resource(self, name: str, value: Union[str, int]) -> None:
+        """Add a resource to the job."""
+        ...
+
+
+class GroupJobSchedulerInterface(JobSchedulerInterface, ABC):
+    @abstractmethod
+    def jobs(self) -> Iterable[SingleJobSchedulerInterface]:
+        """Return an iterable of jobs in the group."""
         ...

@@ -49,3 +49,17 @@ class SchedulerPluginRegistry(PluginRegistryBase):
                 kind=AttributeKind.CLASS,
             ),
         }
+
+    def collect_plugins(self):
+        """Collect plugins and call register_plugin for each."""
+        super().collect_plugins()
+
+        try:
+            from snakemake.scheduling import greedy
+            from snakemake.scheduling import milp
+        except ImportError:
+            # snakemake not present, proceed without adding these plugins
+            return
+
+        self.register_plugin("greedy", greedy)
+        self.register_plugin("ilp", milp)

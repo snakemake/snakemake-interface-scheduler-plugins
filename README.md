@@ -7,11 +7,14 @@ It is recommended to use Snakemake's poetry plugin to set up this skeleton (and 
 
 In any case, a plugin implementing this interface
 
-* has to be named snakemake-scheduler-plugin-<name>,
-* has to be published on pypi.io, and
-* has to offer the following code implemented in its main module
+* Has to be named snakemake-scheduler-plugin-<name>.
+* The name should be descriptive.
+* The names ``greedy`` ``ilp`` and ``milp`` are forbidden, as they are used by Snakemake's internal schedulers.
+* Has to be published on pypi.io.
+* Has to offer the following code implemented in its main module.
 
 ```python
+from dataclasses import dataclass
 
 from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
 from snakemake_interface_scheduler_plugins.base import SchedulerBase
@@ -23,7 +26,8 @@ from snakemake_interface_scheduler_plugins.interfaces.jobs import SchedulerJobIn
 # They will occur in the Snakemake CLI as --scheduler-<storage-plugin-name>-<param-name>
 # Make sure that all defined fields are 'Optional' and specify a default value
 # of None or anything else that makes sense in your case.
-class Settings(SchedulerSettingsBase):
+@dataclass
+class SchedulerSettings(SchedulerSettingsBase):
     myparam: Optional[int] = field(
         default=None,
         metadata={
@@ -50,6 +54,9 @@ class Settings(SchedulerSettingsBase):
     )
 
 
+
+# Inside of the Scheduler, you can use self.logger (a normal Python logger of type 
+# logging.Logger) to log any additional informations or warnings.
 class Scheduler(SchedulerBase):
     def __post_init__(self) -> None:
         # Optional, remove method if not needed.
@@ -58,15 +65,38 @@ class Scheduler(SchedulerBase):
         # with future interface versions.
         ...
 
-    def register_dag(self, dag: SchedulerDAGInterface) -> None:
+    def dag_updated(self) -> None:
         # This method is called when the DAG is updated.
-        # It can be used to learn the DAG dependency structure that might be used to
-        # inform the scheduler. Implement this as pass in case the DAG structure
-        # is irrelevant for your scheduler.
+        # Use self.dag.needrun_jobs() to get an iterable of all jobs that need to be executed.
+        # Use self.dag.dependencies(job) to get an iterable of all dependencies of a job.
         ...
 
-    def select_jobs(self, open_jobs: Iterable[SchedulerJobInterface]) -> Iterable[SchedulerJobInterface]:
-        # Select jobs from the open jobs iterable.
+    def select_jobs(
+        self,
+        selectable_jobs: Sequence[JobSchedulerInterface],
+        remaining_jobs: Sequence[JobSchedulerInterface],
+        available_resources: Mapping[str, Union[int, str]],
+        input_sizes: Dict[AnnotatedStringInterface, int],
+    ) -> Sequence[JobSchedulerInterface]:
+        # Select jobs from the selectable jobs sequence. Thereby, ensure that the selected
+        # jobs do not exceed the available resources.
+
+        # Job resources are available via Job.scheduler_resources.
+
+        # Jobs are either single (SingleJobSchedulerInterface) or group jobs (GroupJobSchedulerInterface).
+        # Single jobs inside a group job can be obtained with GroupJobSchedulerInterface.jobs().
+
+        # While selecting, jobs can be given additional resources that are not
+        # yet defined in the job itself via Job.add_resource(name: str, value: int | str).
+
+        # The argument remaining_jobs contains all jobs that still have to be executed
+        # at some point, including the currently selectable jobs.
+
+        # input_sizes provides a mapping of given input files to their sizes.
+        # This can e.g. be used to prioritize jobs with larger input files or to weight
+        # the footprint of temporary files. The function uses async I/O under the hood,
+        # thus make sure to call it only once per job selection and collect all files of 
+        # interest for a that single call.
         ...
 
 ```

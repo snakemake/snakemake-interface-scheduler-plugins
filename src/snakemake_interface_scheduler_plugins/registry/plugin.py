@@ -5,10 +5,8 @@ __license__ = "MIT"
 
 from dataclasses import dataclass
 from typing import Optional, Type
-from snakemake_interface_logger_plugins.base import SchedulerBase
-from snakemake_interface_scheduler_plugins.settings import (
-    LogHandlerSettingsBase,
-)
+from snakemake_interface_scheduler_plugins.base import SchedulerBase
+from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
 from snakemake_interface_scheduler_plugins import common
 
 from snakemake_interface_common.plugin_registry.plugin import PluginBase
@@ -17,7 +15,7 @@ from snakemake_interface_common.plugin_registry.plugin import PluginBase
 @dataclass
 class Plugin(PluginBase):
     scheduler: SchedulerBase
-    _scheduler_settings_cls: Optional[Type[LogHandlerSettingsBase]]
+    _scheduler_settings_cls: Optional[Type[SchedulerSettingsBase]]
     _name: str
 
     @property
