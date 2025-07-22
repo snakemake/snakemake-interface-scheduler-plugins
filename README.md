@@ -1,4 +1,4 @@
-# Snakemake Logger Plugin Interface
+# Snakemake Scheduler Plugin Interface
 
 This package provides a stable interface for interactions between Snakemake and its scheduler plugins.
 
@@ -23,7 +23,7 @@ from snakemake_interface_scheduler_plugins.interfaces.jobs import SchedulerJobIn
 
 # Optional:
 # Define settings for your scheduler plugin.
-# They will occur in the Snakemake CLI as --scheduler-<storage-plugin-name>-<param-name>
+# They will occur in the Snakemake CLI as --scheduler-<plugin-name>-<param-name>
 # Make sure that all defined fields are 'Optional' and specify a default value
 # of None or anything else that makes sense in your case.
 @dataclass
