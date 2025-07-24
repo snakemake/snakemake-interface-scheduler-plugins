@@ -42,14 +42,14 @@ class JobSchedulerInterface(ABC):
         ...
 
 
-class SingleJobSchedulerInterface(JobSchedulerInterface, ABC):
+class SingleJobSchedulerInterface(ABC):
     @abstractmethod
     def add_aux_resource(self, name: str, value: Union[str, int]) -> None:
         """Add a resource to the job."""
         ...
 
 
-class GroupJobSchedulerInterface(JobSchedulerInterface, ABC):
+class GroupJobSchedulerInterface(ABC):
     @abstractmethod
     def jobs(self) -> Iterable[SingleJobSchedulerInterface]:
         """Return an iterable of jobs in the group."""

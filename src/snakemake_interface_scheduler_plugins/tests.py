@@ -1,73 +1,93 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Iterable, List, Optional, Type, Union
+from collections import defaultdict
+import logging
+from typing import Dict, Iterable, List, Mapping, Optional, Type, Union
 from snakemake_interface_scheduler_plugins.base import SchedulerBase
-from snakemake_interface_scheduler_plugins.interfaces.dag import SchedulerDAGInterface
-from snakemake_interface_scheduler_plugins.interfaces.jobs import SchedulerJobInterface
+from snakemake_interface_scheduler_plugins.interfaces.dag import DAGSchedulerInterface
+from snakemake_interface_scheduler_plugins.interfaces.jobs import JobSchedulerInterface, SingleJobSchedulerInterface
 from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
 from snakemake_interface_common.io import AnnotatedStringInterface
 
 
-class DummyJob(SchedulerJobInterface):
+class DummyJob(JobSchedulerInterface, SingleJobSchedulerInterface):
     def __init__(
         self,
         input: List[AnnotatedStringInterface],
         output: List[AnnotatedStringInterface],
-        resources: Dict[str, Union[str, int, float]],
+        resources: Dict[str, Union[str, int]],
     ) -> None:
         self._input = input
         self._output = output
+        self._resources = resources
 
+    @property
     def input(self) -> Iterable[AnnotatedStringInterface]:
         return self._input
 
+    @property
     def output(self) -> Iterable[AnnotatedStringInterface]:
         return self._output
 
+    @property
     def log(self) -> Iterable[AnnotatedStringInterface]:
         return []
 
+    @property
     def benchmark(self) -> Iterable[AnnotatedStringInterface]:
         return []
+    
+    @property
+    def priority(self) -> int:
+        return 0
 
-    def resources(self) -> Dict[str, Union[str, int, float]]:
-        return {}
+    @property
+    def scheduler_resources(self) -> Mapping[str, Union[str, int]]:
+        return self._resources
+
+    def add_aux_resource(self, name: str, value: Union[str, int]) -> None:
+        assert name not in self._resources, f"Resource {name} already exists."
+        self._resources[name] = value
 
 
-class DummyDAG(SchedulerDAGInterface):
+class DummyDAG(DAGSchedulerInterface):
     def __init__(self) -> None:
+        from snakemake.io import AnnotatedString
         self._jobs = [
             DummyJob(
-                input=[AnnotatedStringInterface("input1.txt")],
-                output=[AnnotatedStringInterface("output1.txt")],
+                input=[AnnotatedString("input1.txt")],
+                output=[AnnotatedString("output1.txt")],
                 resources={"cpu": 1, "mem_mb": 2048},
             ),
             DummyJob(
-                input=[AnnotatedStringInterface("output1.txt")],
-                output=[AnnotatedStringInterface("output2.txt")],
+                input=[AnnotatedString("output1.txt")],
+                output=[AnnotatedString("output2.txt")],
                 resources={"cpu": 2, "mem_mb": 4096},
             ),
             DummyJob(
-                input=[AnnotatedStringInterface("output1.txt")],
-                output=[AnnotatedStringInterface("output3.txt")],
+                input=[AnnotatedString("output1.txt")],
+                output=[AnnotatedString("output3.txt")],
                 resources={"cpu": 1, "mem_mb": 1024},
             ),
         ]
-        self._dependencies: Dict[SchedulerJobInterface, List[SchedulerJobInterface]] = {
+        self._dependencies: Mapping[SingleJobSchedulerInterface, List[SingleJobSchedulerInterface]] = {
             self._jobs[1]: [self._jobs[0]],
             self._jobs[2]: [self._jobs[0]],
         }
         self._finished = set()
 
-    def jobs(self) -> Iterable[SchedulerJobInterface]:
+    def jobs(self) -> Iterable[JobSchedulerInterface]:
         return self._jobs
-
-    def dependencies(
-        self, job: SchedulerJobInterface
-    ) -> Iterable[SchedulerJobInterface]:
+    
+    def job_dependencies(
+        self, job: SingleJobSchedulerInterface
+    ) -> Iterable[SingleJobSchedulerInterface]:
         return self._dependencies.get(job, [])
 
-    def finished(self, job: SchedulerJobInterface) -> bool:
+    def finished(self, job: SingleJobSchedulerInterface) -> bool:
         return job in self._finished
+
+    def needrun_jobs(self) -> Iterable[SingleJobSchedulerInterface]:
+        return (job for job in self._jobs if not self.finished(job))
 
 
 class TestSchedulerBase(ABC):
@@ -80,9 +100,11 @@ class TestSchedulerBase(ABC):
     def get_scheduler_settings(self) -> Optional[SchedulerSettingsBase]: ...
 
     def test_scheduler(self):
-        scheduler_cls = self.get_scheduler_cls()
+        dag = DummyDAG()
         settings = self.get_scheduler_settings()
-        scheduler = scheduler_cls(settings=settings)
+        scheduler_cls = self.get_scheduler_cls()
+        
+        scheduler = scheduler_cls(dag, settings=settings, logger=logging.getLogger("TestScheduler"))
         assert isinstance(scheduler, SchedulerBase), (
             "Scheduler instance is not of type SchedulerBase"
         )
@@ -90,33 +112,33 @@ class TestSchedulerBase(ABC):
             "Scheduler settings do not match expected settings"
         )
 
-        dag = DummyDAG()
+        scheduler.dag_updated()
 
-        scheduler.register_dag(dag)
-
-        scheduled = list(
-            scheduler.select_jobs(
-                [dag._jobs[0]], available_resources={"cpu": 1, "mem_mb": 1024}
-            )
+        scheduled = scheduler.select_jobs(
+            [dag._jobs[0]],
+            dag._jobs,
+            available_resources={"cpu": 1, "mem_mb": 1024},
+            input_sizes=defaultdict(int)
         )
         assert scheduled == [], (
             "Scheduler should not select jobs exceeding available resources"
         )
 
-        scheduled = list(
-            scheduler.select_jobs(
-                [dag._jobs[0]], available_resources={"cpu": 1, "mem_mb": 2048}
-            )
+        scheduled = scheduler.select_jobs(
+            [dag._jobs[0]],
+            dag._jobs,
+            available_resources={"cpu": 1, "mem_mb": 2048},
+            input_sizes=defaultdict(int)
         )
         assert scheduled == [dag._jobs[0]], "Scheduler did not select the expected job"
 
         dag._finished.add(dag._jobs[0])
 
-        scheduled = list(
-            scheduler.select_jobs(
-                [dag._jobs[1], dag._jobs[2]],
-                available_resources={"cpu": 5, "mem_mb": 10000},
-            )
+        scheduled = scheduler.select_jobs(
+            [dag._jobs[1], dag._jobs[2]],
+            dag._jobs,
+            available_resources={"cpu": 5, "mem_mb": 10000},
+            input_sizes=defaultdict(int)
         )
         assert scheduled == [dag._jobs[1], dag._jobs[2]], (
             "Scheduler did not select the expected jobs"
