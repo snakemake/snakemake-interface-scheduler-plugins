@@ -34,7 +34,7 @@ pytest-cov = ">=6.0.0,<7"
 snakemake = { git = "https://github.com/snakemake/snakemake.git", branch = "feat/scheduler-plugin-interface" }
 
 [tool.pixi.feature.dev.tasks]
-format = "ruff format src"
+format = "ruff format"
 lint = "ruff check"
 type-check = "mypy src/"
 qc = { depends-on = ["format", "lint", "type-check"] }

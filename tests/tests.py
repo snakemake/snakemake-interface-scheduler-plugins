@@ -9,8 +9,10 @@ class TestGreedyScheduler(TestSchedulerBase):
 
     def get_scheduler_cls(self) -> Type[SchedulerBase]:
         from snakemake.scheduling.greedy import Scheduler
+
         return Scheduler
 
     def get_scheduler_settings(self) -> Optional[SchedulerSettingsBase]:
         from snakemake.scheduling.greedy import SchedulerSettings
+
         return SchedulerSettings()
