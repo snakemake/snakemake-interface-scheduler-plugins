@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Iterable, Mapping
+from typing import Iterable
 
-from snakemake_interface_scheduler_plugins.interfaces.jobs import SingleJobSchedulerInterface
-from snakemake_interface_common.io import AnnotatedStringInterface
+from snakemake_interface_scheduler_plugins.interfaces.jobs import (
+    SingleJobSchedulerInterface,
+)
 
 
 class DAGSchedulerInterface(ABC):

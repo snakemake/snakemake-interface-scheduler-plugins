@@ -4,7 +4,10 @@ import logging
 from typing import Dict, Iterable, List, Mapping, Optional, Type, Union
 from snakemake_interface_scheduler_plugins.base import SchedulerBase
 from snakemake_interface_scheduler_plugins.interfaces.dag import DAGSchedulerInterface
-from snakemake_interface_scheduler_plugins.interfaces.jobs import JobSchedulerInterface, SingleJobSchedulerInterface
+from snakemake_interface_scheduler_plugins.interfaces.jobs import (
+    JobSchedulerInterface,
+    SingleJobSchedulerInterface,
+)
 from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
 from snakemake_interface_common.io import AnnotatedStringInterface
 
@@ -35,7 +38,7 @@ class DummyJob(JobSchedulerInterface, SingleJobSchedulerInterface):
     @property
     def benchmark(self) -> Iterable[AnnotatedStringInterface]:
         return []
-    
+
     @property
     def priority(self) -> int:
         return 0
@@ -52,6 +55,7 @@ class DummyJob(JobSchedulerInterface, SingleJobSchedulerInterface):
 class DummyDAG(DAGSchedulerInterface):
     def __init__(self) -> None:
         from snakemake.io import AnnotatedString
+
         self._jobs = [
             DummyJob(
                 input=[AnnotatedString("input1.txt")],
@@ -69,7 +73,9 @@ class DummyDAG(DAGSchedulerInterface):
                 resources={"cpu": 1, "mem_mb": 1024},
             ),
         ]
-        self._dependencies: Mapping[SingleJobSchedulerInterface, List[SingleJobSchedulerInterface]] = {
+        self._dependencies: Mapping[
+            SingleJobSchedulerInterface, List[SingleJobSchedulerInterface]
+        ] = {
             self._jobs[1]: [self._jobs[0]],
             self._jobs[2]: [self._jobs[0]],
         }
@@ -77,7 +83,7 @@ class DummyDAG(DAGSchedulerInterface):
 
     def jobs(self) -> Iterable[JobSchedulerInterface]:
         return self._jobs
-    
+
     def job_dependencies(
         self, job: SingleJobSchedulerInterface
     ) -> Iterable[SingleJobSchedulerInterface]:
@@ -103,8 +109,10 @@ class TestSchedulerBase(ABC):
         dag = DummyDAG()
         settings = self.get_scheduler_settings()
         scheduler_cls = self.get_scheduler_cls()
-        
-        scheduler = scheduler_cls(dag, settings=settings, logger=logging.getLogger("TestScheduler"))
+
+        scheduler = scheduler_cls(
+            dag, settings=settings, logger=logging.getLogger("TestScheduler")
+        )
         assert isinstance(scheduler, SchedulerBase), (
             "Scheduler instance is not of type SchedulerBase"
         )
@@ -118,7 +126,7 @@ class TestSchedulerBase(ABC):
             [dag._jobs[0]],
             dag._jobs,
             available_resources={"cpu": 1, "mem_mb": 1024},
-            input_sizes=defaultdict(int)
+            input_sizes=defaultdict(int),
         )
         assert scheduled == [], (
             "Scheduler should not select jobs exceeding available resources"
@@ -128,7 +136,7 @@ class TestSchedulerBase(ABC):
             [dag._jobs[0]],
             dag._jobs,
             available_resources={"cpu": 1, "mem_mb": 2048},
-            input_sizes=defaultdict(int)
+            input_sizes=defaultdict(int),
         )
         assert scheduled == [dag._jobs[0]], "Scheduler did not select the expected job"
 
@@ -138,7 +146,7 @@ class TestSchedulerBase(ABC):
             [dag._jobs[1], dag._jobs[2]],
             dag._jobs,
             available_resources={"cpu": 5, "mem_mb": 10000},
-            input_sizes=defaultdict(int)
+            input_sizes=defaultdict(int),
         )
         assert scheduled == [dag._jobs[1], dag._jobs[2]], (
             "Scheduler did not select the expected jobs"
