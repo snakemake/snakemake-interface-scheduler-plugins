@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2025-07-25)
+
+
+### Miscellaneous Chores
+
+* initial release ([3f6481e](https://github.com/snakemake/snakemake-interface-scheduler-plugins/commit/3f6481e1665be943a496137c7dcbfe2af9f1a686))
+
 ## [1.2.0](https://github.com/snakemake/snakemake-interface-logger-plugins/compare/v1.1.0...v1.2.0) (2025-03-14)
 
 
