@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/snakemake/snakemake-interface-scheduler-plugins/compare/v1.0.0...v2.0.0) (2025-07-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* move proprties from general job interface to single job interface
+
+### Bug Fixes
+
+* move proprties from general job interface to single job interface ([b7b22cb](https://github.com/snakemake/snakemake-interface-scheduler-plugins/commit/b7b22cb54255ed007b810a30f05bb6973e7c45d5))
+
 ## 1.0.0 (2025-07-25)
 
 
