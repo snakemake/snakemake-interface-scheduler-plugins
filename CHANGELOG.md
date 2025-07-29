@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/snakemake/snakemake-interface-scheduler-plugins/compare/v2.0.0...v2.0.1) (2025-07-29)
+
+
+### Documentation
+
+* use snakedeploy ([5ff04b7](https://github.com/snakemake/snakemake-interface-scheduler-plugins/commit/5ff04b76802e4478eb39d80fe93f916a21b4af5b))
+
 ## [2.0.0](https://github.com/snakemake/snakemake-interface-scheduler-plugins/compare/v1.0.0...v2.0.0) (2025-07-28)
 
 
