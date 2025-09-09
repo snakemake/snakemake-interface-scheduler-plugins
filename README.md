@@ -14,6 +14,7 @@ In any case, a plugin implementing this interface
 * Has to offer the following code implemented in its main module.
 
 ```python
+from typing import Dict, Mapping, Optional, Union, Sequence
 from dataclasses import dataclass
 
 from snakemake_interface_scheduler_plugins.settings import SchedulerSettingsBase
@@ -77,7 +78,7 @@ class Scheduler(SchedulerBase):
         remaining_jobs: Sequence[JobSchedulerInterface],
         available_resources: Mapping[str, Union[int, str]],
         input_sizes: Dict[AnnotatedStringInterface, int],
-    ) -> Sequence[JobSchedulerInterface]:
+    ) -> Optional[Sequence[JobSchedulerInterface]]:
         # Select jobs from the selectable jobs sequence. Thereby, ensure that the selected
         # jobs do not exceed the available resources.
 
@@ -97,6 +98,10 @@ class Scheduler(SchedulerBase):
         # the footprint of temporary files. The function uses async I/O under the hood,
         # thus make sure to call it only once per job selection and collect all files of 
         # interest for a that single call.
+        #
+        # Return None to indicate an error in the selection process that shall lead to
+        # a fallback to the Snakemake's internal greedy scheduler.
+        # Otherwise, return the sequence of selected jobs.
         ...
 
 ```
