@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.1](https://github.com/snakemake/snakemake-interface-scheduler-plugins/compare/v2.0.0...v2.0.1) (2025-09-09)
+
+
+### Bug Fixes
+
+* return optional sequence of jobs (also allowing to indicate a fallback to the greedy scheduler) ([e31b679](https://github.com/snakemake/snakemake-interface-scheduler-plugins/commit/e31b67947e52402e7cac1806ba77695dd85fe783))
+
+
+### Documentation
+
+* use snakedeploy ([5ff04b7](https://github.com/snakemake/snakemake-interface-scheduler-plugins/commit/5ff04b76802e4478eb39d80fe93f916a21b4af5b))
+
 ## [2.0.0](https://github.com/snakemake/snakemake-interface-scheduler-plugins/compare/v1.0.0...v2.0.0) (2025-07-28)
 
 
