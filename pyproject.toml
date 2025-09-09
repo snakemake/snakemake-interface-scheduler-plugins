@@ -31,7 +31,7 @@ mypy = ">=1.15.0,<2"
 pytest-cov = ">=6.0.0,<7"
 
 [tool.pixi.feature.dev.pypi-dependencies]
-snakemake = { git = "https://github.com/snakemake/snakemake.git", branch = "feat/scheduler-plugin-interface" }
+snakemake = { git = "https://github.com/snakemake/snakemake.git" }
 
 [tool.pixi.feature.dev.tasks]
 format = "ruff format"
