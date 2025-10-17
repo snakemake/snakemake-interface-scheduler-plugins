@@ -44,7 +44,7 @@ class SchedulerBase(ABC):
         remaining_jobs: Sequence[JobSchedulerInterface],
         available_resources: Mapping[str, Union[int, str]],
         input_sizes: Dict[AnnotatedStringInterface, int],
-    ) -> Optional[Sequence[JobSchedulerInterface]]:
+    ) -> Optional[Set[JobSchedulerInterface]]:
         """Select jobs from the selectable jobs sequence. Thereby, ensure that the selected
         jobs do not exceed the available resources.
 
