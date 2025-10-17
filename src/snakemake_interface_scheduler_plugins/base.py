@@ -67,6 +67,6 @@ class SchedulerBase(ABC):
 
         Return None to indicate an error in the selection process that shall lead to
         a fallback to the Snakemake's internal greedy scheduler.
-        Otherwise, return the set of selected jobs.
+        Otherwise, return the sequence of selected jobs.
         """
         ...
