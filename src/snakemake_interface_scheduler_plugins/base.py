@@ -4,7 +4,7 @@ __email__ = "johannes.koester@uni-due.de"
 __license__ = "MIT"
 
 import logging
-from typing import Dict, Mapping, Optional, Union, Sequence
+from typing import Dict, Mapping, Optional, Union, Sequence, Set
 from snakemake_interface_scheduler_plugins.interfaces.dag import DAGSchedulerInterface
 from snakemake_interface_scheduler_plugins.interfaces.jobs import JobSchedulerInterface
 from snakemake_interface_scheduler_plugins.settings import (
