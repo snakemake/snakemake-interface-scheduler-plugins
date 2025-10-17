@@ -4,7 +4,7 @@ __email__ = "johannes.koester@uni-due.de"
 __license__ = "MIT"
 
 import logging
-from typing import Dict, Mapping, Optional, Union, Sequence, Set
+from typing import Dict, Mapping, Optional, Union, Sequence
 from snakemake_interface_scheduler_plugins.interfaces.dag import DAGSchedulerInterface
 from snakemake_interface_scheduler_plugins.interfaces.jobs import JobSchedulerInterface
 from snakemake_interface_scheduler_plugins.settings import (
@@ -44,7 +44,7 @@ class SchedulerBase(ABC):
         remaining_jobs: Sequence[JobSchedulerInterface],
         available_resources: Mapping[str, Union[int, str]],
         input_sizes: Dict[AnnotatedStringInterface, int],
-    ) -> Optional[Set[JobSchedulerInterface]]:
+    ) -> Optional[Sequence[JobSchedulerInterface]]:
         """Select jobs from the selectable jobs sequence. Thereby, ensure that the selected
         jobs do not exceed the available resources.
 
@@ -67,6 +67,6 @@ class SchedulerBase(ABC):
 
         Return None to indicate an error in the selection process that shall lead to
         a fallback to the Snakemake's internal greedy scheduler.
-        Otherwise, return the sequence of selected jobs.
+        Otherwise, return the set of selected jobs.
         """
         ...
