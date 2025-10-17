@@ -118,7 +118,7 @@ class TestSchedulerBase(ABC):
         ), "Scheduler instance is not of type SchedulerBase"
         assert (
             scheduler.settings == settings
-        ), "Scheduler settings do not match expected settings")
+        ), "Scheduler settings do not match expected settings"
 
         scheduler.dag_updated()
 
