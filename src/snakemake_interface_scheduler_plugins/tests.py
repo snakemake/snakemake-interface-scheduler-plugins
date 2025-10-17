@@ -128,7 +128,7 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 1, "mem_mb": 1024},
             input_sizes=defaultdict(int),
         )
-        assert scheduled == [], (
+        assert scheduled == set([]), (
             "Scheduler should not select jobs exceeding available resources"
         )
 
@@ -138,7 +138,7 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 1, "mem_mb": 2048},
             input_sizes=defaultdict(int),
         )
-        assert scheduled == [dag._jobs[0]], "Scheduler did not select the expected job"
+        assert scheduled == set([dag._jobs[0]]), "Scheduler did not select the expected job"
 
         dag._finished.add(dag._jobs[0])
 
@@ -148,6 +148,6 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 5, "mem_mb": 10000},
             input_sizes=defaultdict(int),
         )
-        assert scheduled == [dag._jobs[1], dag._jobs[2]], (
+        assert scheduled == set([dag._jobs[1], dag._jobs[2]]), (
             "Scheduler did not select the expected jobs"
         )
