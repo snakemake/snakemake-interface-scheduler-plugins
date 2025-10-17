@@ -113,12 +113,12 @@ class TestSchedulerBase(ABC):
         scheduler = scheduler_cls(
             dag, settings=settings, logger=logging.getLogger("TestScheduler")
         )
-        assert isinstance(
-            scheduler, SchedulerBase
-        ), "Scheduler instance is not of type SchedulerBase"
-        assert (
-            scheduler.settings == settings
-        ), "Scheduler settings do not match expected settings"
+        assert isinstance(scheduler, SchedulerBase), (
+            "Scheduler instance is not of type SchedulerBase"
+        )
+        assert scheduler.settings == settings, (
+            "Scheduler settings do not match expected settings"
+        )
 
         scheduler.dag_updated()
 
@@ -128,9 +128,9 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 1, "mem_mb": 1024},
             input_sizes=defaultdict(int),
         )
-        assert scheduled == set(
-            []
-        ), "Scheduler should not select jobs exceeding available resources"
+        assert scheduled == set([]), (
+            "Scheduler should not select jobs exceeding available resources"
+        )
 
         scheduled = scheduler.select_jobs(
             [dag._jobs[0]],
@@ -138,9 +138,9 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 1, "mem_mb": 2048},
             input_sizes=defaultdict(int),
         )
-        assert scheduled == set(
-            [dag._jobs[0]]
-        ), "Scheduler did not select the expected job"
+        assert scheduled == set([dag._jobs[0]]), (
+            "Scheduler did not select the expected job"
+        )
 
         dag._finished.add(dag._jobs[0])
 
@@ -150,6 +150,6 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 5, "mem_mb": 10000},
             input_sizes=defaultdict(int),
         )
-        assert scheduled == set(
-            [dag._jobs[1], dag._jobs[2]]
-        ), "Scheduler did not select the expected jobs"
+        assert scheduled == set([dag._jobs[1], dag._jobs[2]]), (
+            "Scheduler did not select the expected jobs"
+        )
