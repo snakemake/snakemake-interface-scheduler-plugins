@@ -71,13 +71,18 @@ class DummyDAG(DAGSchedulerInterface):
                 input=[AnnotatedString("output1.txt")],
                 output=[AnnotatedString("output3.txt")],
                 resources={"cpu": 1, "mem_mb": 1024},
-            ),
+            DummyJob(
+                input=[AnnotatedString("output1.txt")],
+                output=[AnnotatedString("output4.txt")],
+                resources={"cpu": 1, "mem_mb": 10024},
+            ),            ),
         ]
         self._dependencies: Mapping[
             SingleJobSchedulerInterface, List[SingleJobSchedulerInterface]
         ] = {
             self._jobs[1]: [self._jobs[0]],
             self._jobs[2]: [self._jobs[0]],
+            self._jobs[3]: [self._jobs[0]],
         }
         self._finished = set()
 
@@ -128,7 +133,7 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 1, "mem_mb": 1024},
             input_sizes=defaultdict(int),
         )
-        assert set(scheduled) == set([]), (
+        assert scheduled == [], (
             "Scheduler should not select jobs exceeding available resources"
         )
 
@@ -138,14 +143,14 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 1, "mem_mb": 2048},
             input_sizes=defaultdict(int),
         )
-        assert set(scheduled) == set([dag._jobs[0]]), (
+        assert scheduled == [dag._jobs[0]], (
             "Scheduler did not select the expected job"
         )
 
         dag._finished.add(dag._jobs[0])
 
         scheduled = scheduler.select_jobs(
-            [dag._jobs[1], dag._jobs[2]],
+            [dag._jobs[1], dag._jobs[2], dag._jobs[3]],
             dag._jobs,
             available_resources={"cpu": 5, "mem_mb": 10000},
             input_sizes=defaultdict(int),
