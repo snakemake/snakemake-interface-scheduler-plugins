@@ -71,11 +71,12 @@ class DummyDAG(DAGSchedulerInterface):
                 input=[AnnotatedString("output1.txt")],
                 output=[AnnotatedString("output3.txt")],
                 resources={"cpu": 1, "mem_mb": 1024},
+            ),
             DummyJob(
                 input=[AnnotatedString("output1.txt")],
                 output=[AnnotatedString("output4.txt")],
                 resources={"cpu": 1, "mem_mb": 10024},
-            ),            ),
+            ),
         ]
         self._dependencies: Mapping[
             SingleJobSchedulerInterface, List[SingleJobSchedulerInterface]
