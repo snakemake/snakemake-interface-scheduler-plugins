@@ -144,18 +144,12 @@ class TestSchedulerBase(ABC):
             available_resources={"cpu": 1, "mem_mb": 2048},
             input_sizes=defaultdict(int),
         )
-        assert scheduled == [dag._jobs[0]], (
-            "Scheduler did not select the expected job"
-        )
+        assert scheduled == [dag._jobs[0]], "Scheduler did not select the expected job"
 
         dag._finished.add(dag._jobs[0])
 
         scheduled = scheduler.select_jobs(
-            [
-                dag._jobs[1],
-                dag._jobs[2],
-                dag._jobs[3]
-            ],
+            [dag._jobs[1], dag._jobs[2], dag._jobs[3]],
             dag._jobs,
             available_resources={"cpu": 5, "mem_mb": 10000},
             input_sizes=defaultdict(int),
