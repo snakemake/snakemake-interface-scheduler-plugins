@@ -16,6 +16,7 @@ jobs:
         with:
           release-type: python
           package-name: snakemake-interface-scheduler-plugins
+          token: ${{ secrets.RELEASE_PLEASE_PR_CI_TOKEN }}
 
   publish:
     runs-on: ubuntu-latest
