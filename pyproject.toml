@@ -1,6 +1,6 @@
 [project]
 name = "snakemake-interface-scheduler-plugins"
-version = "2.0.1"
+version = "2.0.2"
 description = "Scheduler plugin interface for snakemake"
 authors = [
     { name = "Johannes Köster", email = "johannes.koester@uni-due.de" },

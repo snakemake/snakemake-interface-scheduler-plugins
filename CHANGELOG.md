@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/snakemake/snakemake-interface-scheduler-plugins/compare/v2.0.1...v2.0.2) (2025-10-20)
+
+
+### Miscellaneous Chores
+
+* release 2.0.2 ([8fa596f](https://github.com/snakemake/snakemake-interface-scheduler-plugins/commit/8fa596f5bbfc9d937730ba69562a2d72a77bfdf8))
+
 ## [2.0.1](https://github.com/snakemake/snakemake-interface-scheduler-plugins/compare/v2.0.0...v2.0.1) (2025-09-09)
 
 
